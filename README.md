@@ -110,31 +110,31 @@ cd gui && pip install -r requirements.txt && python main.py
 
 ```mermaid
 flowchart TB
-    subgraph SENS["传感层"]
+    subgraph SENS[传感层]
         MT6835["MT6835<br/>21位绝对角<br/>SPI 12.5MHz"]
         MT6701["MT6701<br/>14位电机轴角<br/>SSI 6.25MHz"]
     end
 
-    subgraph CORE["ctrl_core · 板级无关控制核"]
-        direction TB
-        AP["angle_proc<br/>α 解算 + 下垂标定"]
-        TM["theta_mt_path<br/>θ 解算 20.45:1"]
-        AV["arm_vel<br/>ωθ 估计"]
-        FSM["mode_fsm<br/>IDLE→SWING→BAL⇄POS→SAFE"]
+    subgraph CORE[ctrl_core 板级无关控制核]
+        AP["angle_proc<br/>α解算+下垂标定"]
+        TM["theta_mt_path<br/>θ解算 20.45:1"]
+        AV["arm_vel<br/>ωθ估计"]
+        FSM["mode_fsm<br/>IDLE SWING BAL POS SAFE"]
         SW["swingup_core<br/>三相位甩摆"]
-        LQR["lqr_core<br/>4状态 LQR 三级流水"]
-        OBS["obs_core<br/>稳态 Kalman"]
-        OS["out_stage<br/>软死区·速度自适应·16格摩擦LUT·换向守卫"]
+        LQR["lqr_core<br/>4状态LQR三级流水"]
+        OBS["obs_core<br/>稳态Kalman"]
+        OS["out_stage<br/>软死区+速度自适应<br/>16格摩擦LUT+换向守卫"]
     end
 
-    subgraph IO["执行与通信"]
+    subgraph IO[执行与通信]
         PWM["motor_pwm<br/>21.6kHz"]
         TB["TB6612FNG"]
-        UART["debug_link<br/>CRC16 · 500Hz遥测"]
+        UART["debug_link<br/>CRC16 500Hz遥测"]
     end
 
     MT6835 --> AP
-    MT6701 --> TM --> AV
+    MT6701 --> TM
+    TM --> AV
     AP --> FSM
     AP --> LQR
     TM --> LQR
@@ -144,7 +144,8 @@ flowchart TB
     LQR --> OBS
     LQR --> OS
     SW --> OS
-    OS --> PWM --> TB
+    OS --> PWM
+    PWM --> TB
     FSM --> UART
     LQR --> UART
 ```
