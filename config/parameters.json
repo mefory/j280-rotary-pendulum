@@ -1,0 +1,167 @@
+{
+  "version": 2,
+  "description": "V2首版：所有控制参数仅SAFE/IDLE提交；单位转换集中维护",
+  "parameters": [
+    {
+      "id": 0,
+      "key": "k_alpha",
+      "label": "摆角增益",
+      "group": "稳摆",
+      "unit": "duty/cdeg",
+      "scale": 8192,
+      "default": 17751,
+      "min": 0,
+      "max": 32767
+    },
+    {
+      "id": 1,
+      "key": "k_alpha_dot",
+      "label": "摆角速度增益",
+      "group": "稳摆",
+      "unit": "duty/(0.1°/s)",
+      "scale": 8192,
+      "default": 11613,
+      "min": 0,
+      "max": 32767
+    },
+    {
+      "id": 2,
+      "key": "k_theta",
+      "label": "臂位置增益",
+      "group": "稳摆",
+      "unit": "duty/cdeg",
+      "scale": 8192,
+      "default": 206,
+      "min": 0,
+      "max": 32767
+    },
+    {
+      "id": 3,
+      "key": "k_theta_dot",
+      "label": "臂角速度增益",
+      "group": "稳摆",
+      "unit": "duty/(0.1°/s)",
+      "scale": 8192,
+      "default": 7104,
+      "min": 0,
+      "max": 32767
+    },
+    {
+      "id": 4,
+      "key": "comp_positive",
+      "label": "正向实际死区补偿",
+      "group": "输出",
+      "unit": "%",
+      "scale": 100,
+      "default": 375,
+      "min": 0,
+      "max": 1000
+    },
+    {
+      "id": 5,
+      "key": "comp_negative",
+      "label": "负向实际死区补偿",
+      "group": "输出",
+      "unit": "%",
+      "scale": 100,
+      "default": 375,
+      "min": 0,
+      "max": 1000
+    },
+    {
+      "id": 6,
+      "key": "swing_amplitude",
+      "label": "甩摆限幅",
+      "group": "起摆",
+      "unit": "%",
+      "scale": 100,
+      "default": 8800,
+      "min": 0,
+      "max": 9500
+    },
+    {
+      "id": 7,
+      "key": "capture_angle",
+      "label": "捕获角度",
+      "group": "稳摆",
+      "unit": "°",
+      "scale": 100,
+      "default": 3000,
+      "min": 100,
+      "max": 3000
+    },
+    {
+      "id": 8,
+      "key": "fall_angle",
+      "label": "掉摆角度",
+      "group": "稳摆",
+      "unit": "°",
+      "scale": 100,
+      "default": 9000,
+      "min": 3100,
+      "max": 9000
+    },
+    {
+      "id": 9,
+      "key": "relative_target",
+      "label": "按键相对目标",
+      "group": "定位",
+      "unit": "°",
+      "scale": 100,
+      "default": 3000,
+      "min": -6000,
+      "max": 6000
+    },
+    {
+      "id": 10,
+      "key": "fling_delta",
+      "label": "甩摆距离",
+      "group": "起摆",
+      "unit": "°",
+      "scale": 100,
+      "default": 11800,
+      "min": 3000,
+      "max": 18000
+    },
+    {
+      "id": 11,
+      "key": "pos_k3",
+      "label": "POS臂位置增益",
+      "group": "定位",
+      "unit": "duty/cdeg",
+      "scale": 8192,
+      "default": 2064,
+      "min": 0,
+      "max": 32767
+    },
+    {
+      "id": 12,
+      "key": "pos_k4",
+      "label": "POS臂角速度增益",
+      "group": "定位",
+      "unit": "duty/(0.1°/s)",
+      "scale": 8192,
+      "default": 13166,
+      "min": 0,
+      "max": 32767
+    },
+    {
+      "id": 13,
+      "key": "alpha_trim",
+      "label": "α零位微调",
+      "group": "标定",
+      "unit": "cdeg",
+      "scale": 1,
+      "default": 0,
+      "min": -30000,
+      "max": 30000
+    }
+  ],
+  "write_modes": [
+    0,
+    4
+  ],
+  "apply": "atomic_next_control_tick",
+  "type": "signed_int32_wire_int16_register",
+  "note": "V2没有旧协议sw_center；实际补偿375不再显示为旧寄存器750。CPR/极性/滤波/轨迹速度仍为编译参数。"
+}

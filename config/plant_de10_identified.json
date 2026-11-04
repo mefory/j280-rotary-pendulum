@@ -1,0 +1,14 @@
+{
+  "source": "DE10-Standard five single-shot swing traces, 2026-09-27",
+  "scope": "Candidate effective model fitted to 0-0.65 s arm angle and 0-0.48 s unsaturated pendulum angle; not deployed to FPGA",
+  "parameters": {
+    "motor_gain": 0.663244499,
+    "J_rod": 0.00052065820548,
+    "b_vis": 0.0103448723,
+    "b_rod": 0.000361739251
+  },
+  "sensor": {
+    "phase_deg": 267.51,
+    "offset_c01": 8751
+  }
+}

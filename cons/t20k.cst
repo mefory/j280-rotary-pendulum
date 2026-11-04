@@ -1,0 +1,104 @@
+// ============================================================================
+// t20k.cst — Tang Primer 20K 引脚约束（GW2A-LV18PG256C8/I7）
+// 来源：Sipeed 官方例程（UART_HELLO / HDMI dk_video / LiteX sipeed_tang_primer_20k）
+// 交叉一致的引脚分配；Dock 底板 bank 默认 3.3V（官方 wiki 补充说明），全 LVCMOS33。
+// 按键低有效（Dock 板上拉靠 FPGA 内部 PULL_MODE=UP）。
+//
+// 按键分配（对照 J280：SW1启动 SW2模式 SW3标定 SW4急停）：
+//   key_n[0]=C7 启动 | key_n[1]=D7 模式 | key_n[2]=T2 标定 | key_n[3]=T3 急停
+//   key_n[4]=T10 复位（照 HDMI 例程 rst 习惯）
+// ============================================================================
+
+// 时钟 27MHz → 片内 rPLL 倍频 50MHz
+IO_LOC  "clk27" H11;
+IO_PORT "clk27" IO_TYPE=LVCMOS33 PULL_MODE=UP BANK_VCCIO=3.3;
+
+// 按键（低有效）
+IO_LOC  "key_n[0]" C7;
+IO_PORT "key_n[0]" IO_TYPE=LVCMOS33 PULL_MODE=UP BANK_VCCIO=3.3;
+IO_LOC  "key_n[1]" D7;
+IO_PORT "key_n[1]" IO_TYPE=LVCMOS33 PULL_MODE=UP BANK_VCCIO=3.3;
+IO_LOC  "key_n[2]" T2;
+IO_PORT "key_n[2]" IO_TYPE=LVCMOS33 PULL_MODE=UP BANK_VCCIO=3.3;
+IO_LOC  "key_n[3]" T3;
+IO_PORT "key_n[3]" IO_TYPE=LVCMOS33 PULL_MODE=UP BANK_VCCIO=3.3;
+IO_LOC  "key_n[4]" T10;
+IO_PORT "key_n[4]" IO_TYPE=LVCMOS33 PULL_MODE=UP BANK_VCCIO=3.3;
+
+// LED（高电平点亮；led[3:0]=控制器状态，led[4]=节拍慢闪，led[5]=故障）
+IO_LOC  "led[0]" L16;
+IO_PORT "led[0]" IO_TYPE=LVCMOS33 BANK_VCCIO=3.3;
+IO_LOC  "led[1]" L14;
+IO_PORT "led[1]" IO_TYPE=LVCMOS33 BANK_VCCIO=3.3;
+IO_LOC  "led[2]" N14;
+IO_PORT "led[2]" IO_TYPE=LVCMOS33 BANK_VCCIO=3.3;
+IO_LOC  "led[3]" N16;
+IO_PORT "led[3]" IO_TYPE=LVCMOS33 BANK_VCCIO=3.3;
+IO_LOC  "led[4]" A13;
+IO_PORT "led[4]" IO_TYPE=LVCMOS33 BANK_VCCIO=3.3;
+IO_LOC  "led[5]" C13;
+IO_PORT "led[5]" IO_TYPE=LVCMOS33 BANK_VCCIO=3.3;
+
+// ============================================================================
+// UART → 外接 CH340 USB-TTL（PMOD2 底行空脚，2026-10-09 定案）：
+//   板载 BL702 桥（Type-C）经 09-25 codex 固件修复后 JTAG 烧录稳定，但其
+//   UART 转发从未打通（扫描位流 4 波特率全静默）且 USB 枚举极脆（重插掉
+//   COM）——Type-C 此后专职 JTAG 烧录，串口改走外接 3.3V CH340：
+//   模块 TXD→C12(FPGA rx)、模块 RXD←B12(FPGA tx)、GND 共地，IO 电平 3.3V。
+//   波特率 = 源码默认 1M（与 DE10 一致，上位机 devices.py 先试 1M）。
+//   PMOD2 底行左右两脚原本就是 ADS1220 方案的保留脚；右列第 3 行 A14 仍保留。
+// ============================================================================
+IO_LOC  "uart_tx" B12;
+IO_PORT "uart_tx" IO_TYPE=LVCMOS33 PULL_MODE=UP DRIVE=8 BANK_VCCIO=3.3;
+IO_LOC  "uart_rx" C12;
+IO_PORT "uart_rx" IO_TYPE=LVCMOS33 PULL_MODE=UP BANK_VCCIO=3.3;
+
+// ============================================================================
+// MT6835 SPI（PMOD2，2026-10-16 双编码器方案，experiment/mt6835-gmr-observer）：
+//   D14=CSN、E15=SCK（空闲高，mode3）、B14=MOSI、A15=MISO；B13 空出。
+//   四线恰好复用 ADS1220 时代脚位；MISO 帧间高阻靠 FPGA 内部上拉读 1。
+//   PMOD2 的 3V3/GND 给模块供电（3.3V 统一电平，MISO 高阻期读 1）。
+// ============================================================================
+IO_LOC  "spi_csn" D14;
+IO_PORT "spi_csn" IO_TYPE=LVCMOS33 DRIVE=8 BANK_VCCIO=3.3;
+IO_LOC  "spi_sck" E15;
+IO_PORT "spi_sck" IO_TYPE=LVCMOS33 DRIVE=8 BANK_VCCIO=3.3;
+IO_LOC  "spi_mosi" B14;
+IO_PORT "spi_mosi" IO_TYPE=LVCMOS33 DRIVE=8 BANK_VCCIO=3.3;
+IO_LOC  "spi_miso" A15;
+IO_PORT "spi_miso" IO_TYPE=LVCMOS33 PULL_MODE=UP BANK_VCCIO=3.3;
+
+// ============================================================================
+// 电机驱动 TB6612（PMOD1，照片丝印映射）：
+//   T12=AIN1、R11=AIN2、M14=PWMA；J14=STBY、J16/M15 备用。
+// 2026-10-22：T11/P11 的原霍尔正交编码器已物理拆除、端口删除 ⇒ 引脚释放
+// （不再约束）。要恢复双源：把 enc_a/enc_b 端口加回 t20k_top 并把下面两行
+// 约束复原，同时 ctrl_core 的 TH_SRC_MT_ONLY 置 0。
+// ============================================================================
+IO_LOC  "mot_ain1" T12;
+IO_PORT "mot_ain1" IO_TYPE=LVCMOS33 DRIVE=8 BANK_VCCIO=3.3;
+IO_LOC  "mot_ain2" R11;
+IO_PORT "mot_ain2" IO_TYPE=LVCMOS33 DRIVE=8 BANK_VCCIO=3.3;
+IO_LOC  "mot_pwma" M14;
+IO_PORT "mot_pwma" IO_TYPE=LVCMOS33 DRIVE=8 BANK_VCCIO=3.3;
+// J14 = TB6612 STBY（V2 起启用）；M15 = 电机侧 MT6701 CLK（V5 起启用）
+IO_LOC  "mot_stby" J14;
+IO_PORT "mot_stby" IO_TYPE=LVCMOS33 DRIVE=8 BANK_VCCIO=3.3;
+IO_LOC  "mt6701_sck" M15;
+IO_PORT "mt6701_sck" IO_TYPE=LVCMOS33 DRIVE=8 BANK_VCCIO=3.3;
+IO_LOC  "mt6701_do" J16;
+IO_PORT "mt6701_do" IO_TYPE=LVCMOS33 PULL_MODE=UP BANK_VCCIO=3.3;
+
+// ============================================================================
+// 电机侧 MT6701 SSI 与 θ 源选择（V5，experiment/mt6701-theta，2026-10-19）：
+//   电机保留 13 线霍尔（T11/P11 原链默认），尾部同轴加装 MT6701——
+//   CSN=PMOD2 B13、CLK=PMOD1 M15、DO=PMOD1 J16（3.3V 电平，SSI mode2）。
+//   A14 = θ 源选择脚：悬空（内部上拉）=霍尔（默认），杜邦线拉地=MT6701 链。
+//   完整接线见 docs/MT6701_电机侧θ与MT6835_α_方案.md 与 docs/T20K完整接线图.md。
+// ============================================================================
+IO_LOC  "mt6701_csn" B13;
+IO_PORT "mt6701_csn" IO_TYPE=LVCMOS33 DRIVE=8 BANK_VCCIO=3.3;
+IO_LOC  "th_src_n" A14;
+IO_PORT "th_src_n" IO_TYPE=LVCMOS33 PULL_MODE=UP BANK_VCCIO=3.3;
+
+// 未用引脚保持默认（高阻输入+弱上拉），与官方例程一致

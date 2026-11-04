@@ -1,0 +1,55 @@
+# ---- 构建产物 / 位流 ----
+*.fs
+*.bin
+*.binx
+*.rbf
+*.sof
+*.svf
+build_output/
+audit_*/
+
+# ---- EDA 工具输出 ----
+**/impl/
+**/gwsynthesis/
+*.rpt
+*.rpt.html
+*.log
+*.db
+*.pin.html
+*.power.html
+*.tr.html
+*.vg
+
+# ---- 仿真输出 ----
+sim/out/
+*.vcd
+*.vvp
+*.fst
+
+# ---- 日志与遥测（体积巨大且含现场数据）----
+logs/
+*.jsonl
+*.csv
+
+# ---- MATLAB 生成的数据 ----
+matlab/data/
+
+# ---- Python ----
+__pycache__/
+*.py[cod]
+*.egg-info/
+.venv/
+venv/
+
+# ---- 编辑器 / 系统 ----
+.vscode/
+.idea/
+*.swp
+.DS_Store
+Thumbs.db
+
+# ---- 本地临时文件 ----
+tmp_server*.log
+_probe_out.txt
+server_out.log
+server_err.log
