@@ -75,6 +75,11 @@ rtl/boards/t20k/t20k_top.v     ← 板级外壳：只做引脚映射、传感/�
 
 ## 4. 模式状态机
 
+<div align="center">
+<img src="images/fig-state-machine.jpg" width="620" alt="模式状态机"><br/>
+<sub>IDLE / SWING / BALANCE / POS / SAFE 五状态及转移条件</sub>
+</div>
+
 ```
         START             捕获窗命中
 IDLE ────────► SWING ──────────────► BALANCE ──┬──► POS（自动/强制）

@@ -100,6 +100,11 @@ bang-bang 推杆过顶摔摆。当前 `OBS_USE` 可运行时切换，便于 A/B�
 
 ## 5. 输出级整形
 
+<div align="center">
+<img src="images/gui-balance-curves.jpg" width="640" alt="稳摆实板波形"><br/>
+<sub>稳摆实板波形：α（上）/ θ 0~360°（中）/ 输出 duty（下）</sub>
+</div>
+
 `out_stage` 是控制量与执行器之间的四道处理，**位置精度的关键战场**：
 
 ### 5.1 软死区补偿

@@ -79,7 +79,17 @@ SSI mode 2（CLK 空闲高）、6.25 MHz、每帧 25 个下降沿
 
 PWMA 载波 21.6 kHz（1 250 级），AN1/AN2 为 01/10 正反转、00 coast、11 短路制动。
 
+<div align="center">
+<img src="images/hardware-tb6612.jpg" width="380" alt="TB6612 驱动板"><br/>
+<sub>TB6612FNG 双 H 桥驱动板（本设计只用通道 A）</sub>
+</div>
+
 ## 3. 机械本体
+
+<div align="center">
+<img src="images/hardware-rig.jpg" width="460" alt="旋转倒立摆本体"><br/>
+<sub>官方套件本体：白色摆臂绕竖直轴旋转（θ），末端铰接摆杆（α），底部 12 V 直流电机经 20.45:1 减速箱驱动</sub>
+</div>
 
 官方旋转倒立摆套件（不含原控制板）：
 

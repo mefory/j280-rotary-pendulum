@@ -21,17 +21,17 @@
 
 一个**欠驱动、开环不稳定**系统的完整硬件控制实现。摆杆只能通过旋转臂的加速度间接控制——臂转快了杆会倒，臂不动杆也会倒。全部控制律在 FPGA 里以 **1 kHz 节拍、全定点运算**完成，无 CPU、无中断、无浮点。
 
-```
-     摆杆 (α)  ← 只能"看"，不能直接驱动
-        │
-        ╰── 铰接 ── 摆臂 (θ)  ← 唯一的执行器
-                     │
-                减速箱 20.45:1
-                     │
-                  直流电机
-```
+<div align="center">
+<img src="docs/images/hardware-rig.jpg" width="620" alt="旋转倒立摆机械本体"><br/>
+<sub>旋转倒立摆本体：摆臂（白）绕竖直轴转 θ，摆杆绕水平轴摆 α，减速箱 20.45:1，12 V 直流电机</sub>
+</div>
 
 **它能做的事**：自己把杆甩起来 → 稳住 → 按你指定的 0~360° 绝对角度走过去 → 用静摩擦锁死保持（电机输出归零，零功耗）。
+
+<div align="center">
+<img src="docs/images/gui-overview.jpg" width="720" alt="上位机总览"><br/>
+<sub>上位机「总览」页：模式 / 摆杆 α / 摆臂 θ（多圈）/ 目标方位 / 输出 duty，下方为链路健康日志</sub>
+</div>
 
 ---
 
@@ -191,6 +191,31 @@ flowchart TB
 | ⏱ **控制周期** | **1 ms** | 硬件计数器，无抖动 |
 | ⚡ **Fmax** | **27.219 MHz** | 27 MHz 约束，0 违例 |
 | 💾 **资源** | 逻辑 66% · FF 50% · DSP 80% · BSRAM 5% | GW2A-LV18 |
+
+### 📈 实板波形
+
+<table>
+<tr>
+<td width="50%">
+<img src="docs/images/gui-balance-curves.jpg" alt="稳摆曲线"><br/>
+<b>稳摆</b>：α（上）、θ 0~360°（中）、输出 duty（下）。摆杆被压在 ±2° 内，duty 在死区附近小幅往复。
+</td>
+<td width="50%">
+<img src="docs/images/gui-pos-curves.jpg" alt="位置控制曲线"><br/>
+<b>位置切换</b>：目标（虚线）以 20°/s 斜坡推进，臂角（实线）跟随；到位后目标持稳、te 收敛。
+</td>
+</tr>
+<tr>
+<td width="50%">
+<img src="docs/images/gui-speed-curves.jpg" alt="定速旋转曲线"><br/>
+<b>定速旋转</b>：目标速率（橙虚线）vs 臂速 200 ms 平滑（深蓝）——目标曲线精确，臂均值 96% 跟随，但瞬时偏差大（慢摆叠加）。
+</td>
+<td width="50%">
+<img src="docs/images/hardware-t20k.jpg" alt="Tang Primer 20K"><br/>
+<b>控制板</b>：Sipeed Tang Primer 20K（GW2A-LV18PG256），27 MHz 单时钟域，PMOD 引出双编码器与电机驱动。
+</td>
+</tr>
+</table>
 
 ---
 
